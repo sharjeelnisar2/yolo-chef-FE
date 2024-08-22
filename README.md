@@ -13,20 +13,29 @@ Before you begin, ensure you have met the following requirements:
 ### Cloning the Repository
 
 1. **Clone the repository**:
-    git clone https://github.com/sharjeelnisar2/yolo-chef-FE.git
+
+    ```bash
+    git clone https://github.com/your-username/yolo-chef-FE.git
+    ```
 
 2. **Navigate into the project directory**:
-    cd yolo-chef-FE
 
- ### Installing Dependencies
+    ```bash
+    cd yolo-chef-FE
+    ```
+
+### Installing Dependencies
 
 Run the following command to install the project's dependencies:
+
+```bash
 npm install
+```
 
-### Running the project
-
+Running the Project
 To start the development server, use:
+```bash
 npm run serve
+```
 
-### Started
 This will start the application on http://localhost:8080.
