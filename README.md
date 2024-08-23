@@ -8,7 +8,7 @@ Welcome to the Yolo-Chef Frontend project! This Vue.js project is designed to pr
 
 Before you begin, ensure you have met the following requirements:
 
-- **Node.js**: You need to have Node.js installed. You can download it from [nodejs.org](https://nodejs.org/).
+- **Node.js**: You need to have Node.js installed. You can download it from [nodejs.org](https://nodejs.org/en/download/package-manager).
 
 ### Cloning the Repository
 
