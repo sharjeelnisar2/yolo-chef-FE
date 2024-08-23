@@ -15,7 +15,7 @@ Before you begin, ensure you have met the following requirements:
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/your-username/yolo-chef-FE.git
+    https://github.com/sharjeelnisar2/yolo-chef-FE.git
     ```
 
 2. **Navigate into the project directory**:
@@ -35,7 +35,7 @@ npm install
 Running the Project
 To start the development server, use:
 ```bash
-npm run serve
+npm run dev
 ```
 
 This will start the application on http://localhost:8080.
