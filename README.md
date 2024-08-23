@@ -23,7 +23,16 @@ Before you begin, ensure you have met the following requirements:
     ```bash
     cd yolo-chef-FE
     ```
+### Setting Up the project
 
+1. **Create a `.env` file** at the root of the project with the following content:
+
+    ```bash
+        api_url=your_api_url
+        MESSAGE=your_global_message
+    ```
+
+2. **Fill your credentials** in the `.env` file.
 ### Installing Dependencies
 
 Run the following command to install the project's dependencies:
@@ -38,4 +47,4 @@ To start the development server, use:
 npm run dev
 ```
 
-This will start the application on http://localhost:8080.
+This will start the application on http://localhost:8090.
