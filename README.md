@@ -47,4 +47,4 @@ To start the development server, use:
 npm run dev
 ```
 
-This will start the application on http://localhost:8090.
+This will start the application on http://localhost:3002.
