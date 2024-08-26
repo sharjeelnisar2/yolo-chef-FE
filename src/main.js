@@ -1,3 +1,4 @@
+
 import { createApp } from 'vue';
 import App from './App.vue';
 import { keycloak, initKeycloak } from './Keycloak';
@@ -14,4 +15,3 @@ initKeycloak.then(() => {
 }).catch(error => {
     console.error(error);
 });
-
