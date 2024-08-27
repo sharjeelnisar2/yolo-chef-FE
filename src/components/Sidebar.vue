@@ -40,9 +40,9 @@ const isActiveLink = (link) => {
     </router-link>
 
     <router-link
-      to="/view-orders"
+      to="/orders"
       class="block py-2 px-4 font-semibold rounded"
-      :class="isActiveLink('/view-orders') ? 'bg-white text-black' : 'hover:bg-blue-500 text-white'"
+      :class="isActiveLink('/orders') ? 'bg-white text-black' : 'hover:bg-blue-500 text-white'"
     >
       View Orders
     </router-link>
