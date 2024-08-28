@@ -1,54 +1,51 @@
 <template>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-    <button @click="$logout">Logout</button>
-  </template>
-  
-  <script>
-  import HelloWorld from './components/HelloWorld.vue'
-  import axios from 'axios';
-  import { initKeycloak } from './Keycloak';
-  
-  export default {
-    name: 'App',
-    components: {
-      HelloWorld
-    },
+  <DefaultLayout />
+  <button @click="$logout">Logout</button>
+</template>
 
-    mounted() {
-    initKeycloak.then((keycloak) => {
-      
-      const token = localStorage.getItem("vue-token");
-      console.log('token is:', token);
-      if (token) {
-        axios.get('http://localhost:8082/api/v1/jwtToken', {
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { initKeycloak } from './Keycloak';
+import DefaultLayout from './layouts/DefaultLayout.vue';
+
+const token = ref(null);
+
+onMounted(async () => {
+  try {
+    const keycloak = await initKeycloak;
+
+    const storedToken = localStorage.getItem("vue-token");
+    console.log('Token is:', storedToken);
+    token.value = storedToken;
+
+    if (storedToken) {
+      try {
+        const response = await axios.get('http://localhost:8081/api/v1/jwtToken', {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storedToken}`
           }
-        })
-        .then(response => {
-          console.log('User check successful:', response.data);
-        })
-        .catch(error => {
-          console.error('Error checking user:', error);
         });
-      } else {
-        console.error('No token found in localStorage');
+        console.log('User check successful:', response.data);
+      } catch (error) {
+        console.error('Error checking user:', error);
       }
-    }).catch(error => {
-      console.error('Keycloak initialization failed:', error);
-    });
+    } else {
+      console.error('No token found in localStorage');
+    }
+  } catch (error) {
+    console.error('Keycloak initialization failed:', error);
   }
-};
-  </script>
-  
-  <style>
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
-  </style>
-  
+});
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
