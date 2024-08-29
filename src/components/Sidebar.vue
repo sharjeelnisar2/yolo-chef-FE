@@ -46,5 +46,12 @@ const isActiveLink = (link) => {
     >
       View Orders
     </router-link>
+    <router-link
+      to="/generateRecipe"
+      class="block py-2 px-4 font-semibold rounded"
+      :class="isActiveLink('/generateRecipe') ? 'bg-white text-black' : 'hover:bg-blue-500 text-white'"
+    >
+      Generate Recipies
+    </router-link>
   </nav>
 </template>
