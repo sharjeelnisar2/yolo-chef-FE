@@ -149,11 +149,15 @@ const AIOnClick=()=>{
   aiintrests:ideaForm.value.Intrests,
   aidietaryRestrictions:ideaForm.value.DietaryRestrictions}
 ;
-
+const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+   if(storedToken)
+   {
   try {
     axios.post('http://localhost:8082/generateContent',AIRequest, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${storedToken}`
     }} )
     .then((res)=>{
       
@@ -167,7 +171,7 @@ const AIOnClick=()=>{
     });
   } catch (error) {
     console.error('Error submitting AI Help form', error);
-  }
+  }}
 }
 const AIupdateRecipe = () => {
   AiFormDisabled.value=true;
@@ -229,6 +233,7 @@ const handleAIFileChange = (event) => {
 };
 
 
+const token = ref(null);
 const submitAIHelpForm = async () => {
   if (aiForm.value.images.length === 0) {
     alert('Please select at least one image.');
@@ -246,9 +251,14 @@ const submitAIHelpForm = async () => {
   }
 
   try {
+    const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+   if(storedToken)
+   {
     const response = await axios.post('http://localhost:8082/api/v1/ideas/1/recipes', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${storedToken}`
       }
     }).then((res)=>{
       if(res.status==201)
@@ -258,7 +268,7 @@ const submitAIHelpForm = async () => {
       AiFormDisabled.value = true;
     }
       console.log("Hello",res.status)
-    });
+    });}
   } catch (error) {
     console.error('Error submitting AI Help form', error);
   }
