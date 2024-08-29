@@ -34,6 +34,7 @@ onBeforeUnmount(() => {
 
 <template>
   <!-- Hamburger Icon -->
+   <div>
   <div class="md:hidden">
     <button 
       @click="toggleMenu" 
@@ -55,5 +56,6 @@ onBeforeUnmount(() => {
       <a href="/orders" class="block py-2 px-4 rounded hover:bg-gray-200">Orders</a>
     </nav>
   </div>
+</div>
 </template>
 
