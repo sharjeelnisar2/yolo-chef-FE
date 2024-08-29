@@ -1,6 +1,5 @@
 <template>
   <DefaultLayout />
-  <button @click="$logout">Logout</button>
 </template>
 
 <script setup>
