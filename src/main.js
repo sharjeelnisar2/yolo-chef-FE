@@ -1,12 +1,20 @@
+
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 import './style.css'
 import 'primeicons/primeicons.css'
-import router from './router';
+import { keycloak, initKeycloak } from './Keycloak';
 
-import { createApp } from 'vue'
-import App from './App.vue'
+initKeycloak.then(() => {
+    const app = createApp(App);
+    app.use(router);
+    app.config.globalProperties.$keycloak = keycloak;
+    app.config.globalProperties.$logout = () => {
+        keycloak.logout();
+    };
 
-const app = createApp(App);
-
-app.use(router);
-
-app.mount('#app');
+    app.mount('#app');
+}).catch(error => {
+    console.error(error);
+});

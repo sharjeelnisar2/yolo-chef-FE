@@ -124,10 +124,13 @@ const selectedOrder = ref({});  // Correctly initialized as a ref
 
 async function updateOrderStatus(order) {
   try {
+    const token = localStorage.getItem('vue-token');
+    alert(token);
     const response = await fetch(`http://localhost:8082/api/v1/orders/${order.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `"Bearer"+${token}`
       },
       body: JSON.stringify({ status: order.status }),
     });
@@ -151,7 +154,13 @@ const orderStatusEnum = {
 // Fetch order data from the API
 async function fetchOrders() {
   try {
-    const response = await fetch('http://localhost:8082/api/v1/orders/1');
+    const token = localStorage.getItem('vue-token');
+    const response = await fetch('http://localhost:8082/api/v1/orders/1', {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -165,7 +174,13 @@ async function fetchOrders() {
 // Fetch order items from the API when an order is clicked
 async function fetchOrderDetails(orderId) {
   try {
-    const response = await fetch(`http://localhost:8082/api/v1/orders/detail/${orderId}`);
+    const token = localStorage.getItem('vue-token');
+    const response = await fetch(`http://localhost:8082/api/v1/orders/detail/${orderId}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch order items');
     }

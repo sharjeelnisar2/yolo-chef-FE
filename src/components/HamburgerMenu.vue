@@ -14,10 +14,10 @@ const closeMenu = () => {
 
 
 const handleClickOutside = (event) => {
-  const menu = document.querySelector('.popup-menu');
-  const hamburgerButton = document.querySelector('.hamburger-button');
+  const menu = document.querySelector('.popup-menu'); 
+  const hamburgerButton = document.querySelector('.hamburger-button'); 
   if (menu && !menu.contains(event.target) && !hamburgerButton.contains(event.target)) {
-    closeMenu();
+    closeMenu(); 
   }
 };
 
@@ -34,11 +34,14 @@ onBeforeUnmount(() => {
 
 <template>
   <!-- Hamburger Icon -->
+   <div>
   <div class="md:hidden">
-    <button @click="toggleMenu" class="p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 hamburger-button">
+    <button 
+      @click="toggleMenu" 
+      class="p-2 focus:outline-none focus:ring-2 focus:ring-blue-600 hamburger-button"
+    >
       <!-- Hamburger Icon -->
-      <svg class="w-8 h-8 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor" stroke-width="2">
+      <svg class="w-8 h-8 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
       </svg>
     </button>
@@ -53,4 +56,6 @@ onBeforeUnmount(() => {
       <a href="/orders" class="block py-2 px-4 rounded hover:bg-gray-200">Orders</a>
     </nav>
   </div>
+</div>
 </template>
+
