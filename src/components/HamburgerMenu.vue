@@ -49,10 +49,10 @@ onBeforeUnmount(() => {
   <!-- Popup Menu for smaller screens -->
   <div v-if="isMenuOpen" class="md:hidden absolute top-16 left-4 w-48 bg-white shadow-lg rounded-lg p-4 popup-menu">
     <nav class="flex flex-col space-y-4">
-      <a href="/" class="block py-2 px-4 rounded hover:bg-gray-200">Home</a>
-      <a href="/ideas" class="block py-2 px-4 rounded hover:bg-gray-200">Ideas</a>
-      <a href="/recipies" class="block py-2 px-4 rounded hover:bg-gray-200">Recipies</a>
-      <a href="/orders" class="block py-2 px-4 rounded hover:bg-gray-200">Orders</a>
+      <a href="#" class="block py-2 px-4 rounded hover:bg-gray-200">Generate Idea</a>
+      <a href="#" class="block py-2 px-4 rounded hover:bg-gray-200">Generated Ideas</a>
+      <a href="#" class="block py-2 px-4 rounded hover:bg-gray-200">Submitted Ideas</a>
+      <a href="#" class="block py-2 px-4 rounded hover:bg-gray-200">View Orders</a>
     </nav>
   </div>
 </template>
