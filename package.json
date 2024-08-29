@@ -1,7 +1,8 @@
+
 {
-  "name": "yolo-customer-fe",
-  "private": true,
+  "name": "yolo-chef-fe",
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.5",
+    "keycloak-js": "^25.0.4",
     "primeicons": "^7.0.0",
-    "vue": "^3.4.37",
+    "vue": "^3.4.29",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
