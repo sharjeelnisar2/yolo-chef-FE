@@ -16,17 +16,15 @@ onMounted(async () => {
     const keycloak = await initKeycloak;
 
     const storedToken = localStorage.getItem("vue-token");
-    console.log('Token is:', storedToken);
     token.value = storedToken;
 
     if (storedToken) {
       try {
-        const response = await axios.get('http://localhost:8081/api/v1/jwtToken', {
+        const response = await axios.get('http://localhost:8082/api/v1/jwtToken', {
           headers: {
             'Authorization': `Bearer ${storedToken}`
           }
         });
-        console.log('User check successful:', response.data);
       } catch (error) {
         console.error('Error checking user:', error);
       }
