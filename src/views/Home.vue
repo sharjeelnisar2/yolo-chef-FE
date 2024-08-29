@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    <h1>Home Page</h1>
+    <h1>Home Page only</h1>
     <!-- Content for Generate Idea -->
   </div>
 </template>
