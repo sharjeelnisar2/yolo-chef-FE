@@ -4,8 +4,8 @@
   import Navbar from '@/components/Navbar.vue';
   </script>
   
-<template>
-    <div class="flex h-screen">
+  <template>
+    <div class="flex h-screen m-[-65px]">
       <Sidebar />
       <div class="flex flex-1 flex-col">
         <Navbar />
@@ -15,4 +15,5 @@
       </div>
     </div>
   </template>
+  
   
