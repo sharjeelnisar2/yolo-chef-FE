@@ -43,7 +43,8 @@ onBeforeUnmount(() => {
     <div class="flex items-center">
       <i class="pi pi-utensils text-green-500 text-2xl mr-2"></i> 
       <h1 class="block md:hidden text-2xl font-bold text-gray-800">YOLO</h1>
-      <span class="hidden md:block text-xl font-semi-bold text-gray-600 ml-2">Fast and Fresh Food Delivered</span> 
+      <h1 class="hidden md:block text-2xl font-bold text-blue-600 ml-2">On-demand Food Ordering Platform </h1>
+
     </div>
 
     <div class="flex items-center space-x-4">
