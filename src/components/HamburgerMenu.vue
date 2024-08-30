@@ -54,4 +54,3 @@ onBeforeUnmount(() => {
     </nav>
   </div>
 </template>
-
