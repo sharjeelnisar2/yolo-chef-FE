@@ -24,13 +24,13 @@
         </div>
 
         <div class="mb-4 md:mb-6">
-          <label for="Intrests" class="block text-sm font-semibold mb-1">Intrests:</label>
-          <input v-model="ideaForm.Intrests" id="Intrests" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
+          <label class="block text-sm font-semibold mb-1">Interests:</label>
+          <input v-model="ideaForm.interests" id="customerName" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
         </div>
 
         <div class="mb-4 md:mb-6">
-          <label for="DietaryRestrictions" class="block text-sm font-semibold mb-1">Dietary Restrictions:</label>
-          <input v-model="ideaForm.DietaryRestrictions" id="DietaryRestrictions" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
+            <label class="block text-sm font-semibold mb-1">Dietary Restrictions:</label>
+            <input v-model="ideaForm.dietaryRestrictions" id="customerName" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
         </div>
 
         <!-- Button to Show Recipe Form -->
@@ -74,14 +74,14 @@
           <div class="mb-4 md:mb-6">
             <label for="aiRecipeImages" class="block text-sm font-semibold mb-1">Images:</label>
             <div class="relative">
-              <input @change="handleAIFileChange" id="aiRecipeImages" type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" :disabled="AiFormDisabled"/>
+              <input  @change="handleAIFileChange" id="aiRecipeImages" type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" :disabled="AiFormDisabled"/>
               <label for="aiRecipeImages" class="block bg-blue-600 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700 transition">Choose Files</label>
             </div>
 
             <div class="mt-2 flex flex-wrap gap-2">
               <img v-for="(preview, index) in aiForm.imagePreviews" :key="index" :src="preview" alt="Image preview" class="w-32 h-auto border border-gray-300 rounded" />
             </div>
-            <button v-if="showAIUpdateButton" type="submit" @click="AIupdateRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Update</button>
+            <button v-if="showAIUpdateButton" type="button" @click="AIupdateRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Update</button>
           </div>
 
           <div class="flex flex-col md:flex-row justify-between mt-4">
@@ -102,22 +102,43 @@
 <script setup>
 import { ref,onMounted } from 'vue';
 import axios from 'axios';
-onMounted(() => {
-  retrieveIdeaDetailFormData();
+import { useRoute } from 'vue-router';
+
+const token = ref(null);
+const route = useRoute();
+
+const id = parseInt(route.params.id , 10); // Convert route param to integer
+const idea = ref(null);
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    
+const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+    
+    const response = await axios.get(`http://localhost:8082/api/v1/ideas/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${storedToken}`
+    }} )
+    idea.value = response.data.idea; // Access the 'idea' field from response data
+    retrieveIdeaDetailFormData();
+  } catch (error) {
+    console.error('Error fetching idea:', error);
+  } finally {
+    loading.value = false;
+  }
 });
 const retrieveIdeaDetailFormData = () => {
-  
-  const fetchedData = {
-    title: 'Cake',
-    description: 'a birthday cake having the shape of butterfly',
-    customerName: 'CUSTOMER-456',
-    DietaryRestrictions:'i dont want yeast',
-    Intrests:'cheesy'
-  };
-
-  // Update ideaForm with the fetched data
-  ideaForm.value = fetchedData;
-};
+  if (idea.value) {
+    ideaForm.value = {
+      title: idea.value.title || '',
+      description: idea.value.description || '',
+      customerName: idea.value.customerName || '',
+      dietaryRestrictions: Array.isArray(idea.value.dietaryRestrictions) ? idea.value.dietaryRestrictions : [].toString, // Ensure it's an array
+      interests: Array.isArray(idea.value.interests) ? idea.value.interests : [].toString 
+    }}}
 const AiFormDisabled = ref(false);
 var clickCount= 0; // To keep track of the number of clicks
 var maxClicks=3
@@ -161,7 +182,6 @@ const storedToken = localStorage.getItem("vue-token");
     }} )
     .then((res)=>{
       
-      console.log(res.data)
        aiForm.value.recipeName = res.data.recipeName || '';
         aiForm.value.recipedescription = res.data.recipedescription || '';
          aiForm.value.recipeservingSize = res.data.recipeName || '';
@@ -170,21 +190,49 @@ const storedToken = localStorage.getItem("vue-token");
 
     });
   } catch (error) {
+    alert("Try Again");
     console.error('Error submitting AI Help form', error);
   }}
 }
 const AIupdateRecipe = () => {
-  AiFormDisabled.value=true;
-  AIshowSubmitButton.value=true;
-  showAIUpdateButton.value=false;
-  console.log("Update");
+  try {
+    const formData = new FormData();
+  formData.append('name', aiForm.value.recipeName);
+  formData.append('description', aiForm.value.recipedescription);
+  formData.append('price', aiForm.value.recipeprice);
+  formData.append('serving_size', aiForm.value.recipeservingSize);
+    const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+   if(storedToken)
+   {
+    const recipeId=localStorage.getItem("recipeId");
+    axios.patch(`http://localhost:8082/api/v1/recipes/${recipeId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${storedToken}`
+      }
+    }).then((res)=>{
+      if(res.status==200)
+    {
+      localStorage.removeItem(recipeId)
+      AiFormDisabled.value=true;
+    AIshowSubmitButton.value=true;
+    showAIUpdateButton.value=false;
+    }
+    
+    });}
+  } catch (error) {
+    console.error('Error updating AI Help form', error);
+  }
+  
+  
   // Logic to update the recipe
 };
 const AIEditRecipe = () => {
   AiFormDisabled.value=false;
   AIshowSubmitButton.value=false;
   showAIUpdateButton.value=true;
-  console.log("Update");
+  
   // Logic to update the recipe
 };
 
@@ -233,7 +281,6 @@ const handleAIFileChange = (event) => {
 };
 
 
-const token = ref(null);
 const submitAIHelpForm = async () => {
   if (aiForm.value.images.length === 0) {
     alert('Please select at least one image.');
@@ -261,13 +308,15 @@ const submitAIHelpForm = async () => {
         'Authorization': `Bearer ${storedToken}`
       }
     }).then((res)=>{
+      
       if(res.status==201)
     {
       AIshowUpdateDeleteButtons.value = true;
       AIshowSubmitButton.value=true;
       AiFormDisabled.value = true;
     }
-      console.log("Hello",res.status)
+      
+localStorage.setItem('recipeId', res.data.id);
     });}
   } catch (error) {
     console.error('Error submitting AI Help form', error);
@@ -279,3 +328,17 @@ const submitAIHelpForm = async () => {
 <style >
 
 </style>
+
+
+
+
+
+
+const retrieveIdeaDetailFormData = () => {
+  if (idea.value) {
+    ideaForm.value = {
+      title: idea.value.title || '',
+      description: idea.value.description || '',
+      customerName: idea.value.customerName || '',
+      dietaryRestrictions: Array.isArray(idea.value.dietaryRestrictions) ? idea.value.dietaryRestrictions : [].toString, // Ensure it's an array
+      interests: Array.isArray(idea.value.interests) ? idea.value.interests : [].toString // Ensure it's an array
