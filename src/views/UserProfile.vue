@@ -1,4 +1,3 @@
-
 <template>
   <DefaultLayout v-if="formSubmitted === true" />
   <div v-if="!formSubmitted === true">
@@ -129,14 +128,24 @@
         </div>
       </div>
 
-      <!-- Button to Submit Form -->
-      <button 
+      <div class="flex space-x-4 mb-16">
+        <button 
         type="button" 
         @click="handleSubmit" 
         class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
       >
         Create User Profile
       </button>
+      <button 
+        type="button" 
+           @click="$logout"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+      >
+        Logout
+      </button>
+      </div>
+     
+     
     </form>
   </div>
 </div>
@@ -219,4 +228,3 @@ const handleSubmit = async () => {
 <style scoped>
 
 </style>
-

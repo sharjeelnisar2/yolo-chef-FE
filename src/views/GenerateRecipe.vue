@@ -38,11 +38,10 @@
       </form>
     </div>
 
-     <!-- AI Pop Up -->
     <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="showPopup = false">
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-blue-600">Generate Recipe</h2>
+  <div class="bg-white p-6 rounded-lg shadow-lg" style="max-width: 800px; height: 900px; width: 100%;"> <!-- Custom width -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-blue-600">Generate Recipe</h2>
           <button :disabled="clickCount >= maxClicks" type="button" @click="AIOnClick" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">AI</button>
          <p v-if="clickCount >= maxClicks" class="text-red-500">
       You have reached the maximum number of clicks.
@@ -58,7 +57,8 @@
 
           <div class="mb-4 md:mb-6">
             <label for="aiRecipeDescription" class="block text-sm font-semibold mb-1">Description:</label>
-            <textarea v-model="aiForm.recipedescription" id="aiRecipeDescription" required class="w-full p-2 border border-gray-300 rounded resize-y" :disabled="AiFormDisabled"/>
+            <textarea v-model="aiForm.recipedescription" id="aiRecipeDescription" required class="w-full p-2 border border-gray-300 rounded resize-y" :style="{ height: '150px' }" :disabled="AiFormDisabled"/>
+
           </div>
 
           <div class="mb-4 md:mb-6">
@@ -71,9 +71,10 @@
             <input v-model.number="aiForm.recipeservingSize" id="aiServingSize" type="number" min="1" required class="w-full p-2 border border-gray-300 rounded" :disabled="AiFormDisabled"/>
           </div>
 
-          <div class="mb-4 md:mb-6">
+          <div class="mb-4 md:mb-6" >
+            <div v-if="showImages">
             <label for="aiRecipeImages" class="block text-sm font-semibold mb-1">Images:</label>
-            <div class="relative">
+            <div class="relative" >
               <input  @change="handleAIFileChange" id="aiRecipeImages" type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" :disabled="AiFormDisabled"/>
               <label for="aiRecipeImages" class="block bg-blue-600 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700 transition">Choose Files</label>
             </div>
@@ -81,6 +82,8 @@
             <div class="mt-2 flex flex-wrap gap-2">
               <img v-for="(preview, index) in aiForm.imagePreviews" :key="index" :src="preview" alt="Image preview" class="w-32 h-auto border border-gray-300 rounded" />
             </div>
+            </div>
+
             <button v-if="showAIUpdateButton" type="button" @click="AIupdateRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Update</button>
           </div>
 
@@ -89,7 +92,7 @@
             <button v-if="!AIshowUpdateDeleteButtons" type="submit" class="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition">Save as Draft</button>
             <button v-if="AIshowUpdateDeleteButtons" type="button" @click="AIEditRecipe" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">Edit </button>
             <button v-if="AIshowUpdateDeleteButtons" type="button" @click="AIdeleteRecipe" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">Delete </button>
-            <button @click="showPopup = false" type="button" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition ml-2">Cancel</button>
+            <button @click="cancelForm"  type="button" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition ml-2">Cancel</button>
           </div>
         </form>
       </div>
@@ -104,6 +107,7 @@ import { ref,onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 
+let ideaArray =  [];
 const token = ref(null);
 const route = useRoute();
 
@@ -145,6 +149,28 @@ var maxClicks=3
 const showAIUpdateButton=ref(false);
 const AIshowSubmitButton=ref(false);
 const AIshowUpdateDeleteButtons = ref(false);
+
+const showImages = ref(true);
+
+const cancelForm = () => {
+  aiForm.value = {
+    recipeName: '',
+    recipedescription: '',
+    recipeprice: null,
+    recipeservingSize: null,
+    images: [],
+    imagePreviews: []
+  };
+  
+  // Hide the update/delete buttons and show the submit button
+  AIshowUpdateDeleteButtons.value = false;
+  AIshowSubmitButton.value = false;
+  AiFormDisabled.value = false;
+  
+  // Reset other states as needed
+  showImages.value = true;
+  showPopup.value = false; // Optionally close the popup
+};
 
 //AI
 const AIsaveRecipe = () => {
@@ -188,7 +214,13 @@ const storedToken = localStorage.getItem("vue-token");
         aiForm.value.recipeservingSize = res.data.recipeservingSize || '';
       
 
-    });
+    }).catch((error) => {
+      console.log(error)
+      if (error.response && error.response.status === 400) {
+        alert("Try Again");
+      }
+          
+        });
   } catch (error) {
     alert("Try Again");
     console.error('Error submitting AI Help form', error);
@@ -206,6 +238,7 @@ const AIupdateRecipe = () => {
    if(storedToken)
    {
     const recipeId=localStorage.getItem("recipeId");
+    console.log("Esha",recipeId)
     axios.patch(`http://localhost:8082/api/v1/recipes/${recipeId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -218,6 +251,7 @@ const AIupdateRecipe = () => {
       AiFormDisabled.value=true;
     AIshowSubmitButton.value=true;
     showAIUpdateButton.value=false;
+    showImages.value=true;
     }
     
     });}
@@ -232,7 +266,7 @@ const AIEditRecipe = () => {
   AiFormDisabled.value=false;
   AIshowSubmitButton.value=false;
   showAIUpdateButton.value=true;
-  
+  showImages.value=false;
   // Logic to update the recipe
 };
 
@@ -282,6 +316,8 @@ const handleAIFileChange = (event) => {
 
 
 const submitAIHelpForm = async () => {
+
+      
   if (aiForm.value.images.length === 0) {
     alert('Please select at least one image.');
     return;
@@ -302,7 +338,7 @@ const submitAIHelpForm = async () => {
     token.value = storedToken;
    if(storedToken)
    {
-    const response = await axios.post('http://localhost:8082/api/v1/ideas/1/recipes', formData, {
+    const response = await axios.post(`http://localhost:8082/api/v1/ideas/${id}/recipes`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${storedToken}`
@@ -314,9 +350,10 @@ const submitAIHelpForm = async () => {
       AIshowUpdateDeleteButtons.value = true;
       AIshowSubmitButton.value=true;
       AiFormDisabled.value = true;
+      localStorage.setItem("recipeId",res.data.id)
+console.log(res.data.id)
     }
       
-localStorage.setItem('recipeId', res.data.id);
     });}
   } catch (error) {
     console.error('Error submitting AI Help form', error);
@@ -334,11 +371,3 @@ localStorage.setItem('recipeId', res.data.id);
 
 
 
-const retrieveIdeaDetailFormData = () => {
-  if (idea.value) {
-    ideaForm.value = {
-      title: idea.value.title || '',
-      description: idea.value.description || '',
-      customerName: idea.value.customerName || '',
-      dietaryRestrictions: Array.isArray(idea.value.dietaryRestrictions) ? idea.value.dietaryRestrictions : [].toString, // Ensure it's an array
-      interests: Array.isArray(idea.value.interests) ? idea.value.interests : [].toString // Ensure it's an array
