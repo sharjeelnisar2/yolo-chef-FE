@@ -9,7 +9,7 @@ const routes = [
   { path: '/ideas', name: 'GenerateIdea', component: ViewIdeas },
   { path: '/recipies', name: 'ViewIdeas', component: ViewRecipies },
   { path: '/orders', name: 'ViewOrders', component: ViewOrders },
-  {path: '/generateRecipe',name:'GenerateRecipe',component:GenerateRecipe}
+  {path: '/generateRecipe/:id',name:'GenerateRecipe',component:GenerateRecipe}
 ];
 
 const router = createRouter({

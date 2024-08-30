@@ -79,8 +79,9 @@ function formatDate(dateString) {
 }
 
 function viewIdea(id) {
+ 
   router.push({
-    name: 'ViewRecipes',
+    name: 'GenerateRecipe',
     params: { id }
   }).catch(err => {
     console.error('Navigation error:', err);

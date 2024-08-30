@@ -24,13 +24,13 @@
         </div>
 
         <div class="mb-4 md:mb-6">
-          <label for="Intrests" class="block text-sm font-semibold mb-1">Intrests:</label>
-          <input v-model="ideaForm.Intrests" id="Intrests" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
+          <label class="block text-sm font-semibold mb-1">Interests:</label>
+          <input v-model="ideaForm.interests" id="customerName" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
         </div>
 
         <div class="mb-4 md:mb-6">
-          <label for="DietaryRestrictions" class="block text-sm font-semibold mb-1">Dietary Restrictions:</label>
-          <input v-model="ideaForm.DietaryRestrictions" id="DietaryRestrictions" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
+            <label class="block text-sm font-semibold mb-1">Dietary Restrictions:</label>
+            <input v-model="ideaForm.dietaryRestrictions" id="customerName" type="text" disabled class="w-full p-2 border border-gray-300 rounded" />
         </div>
 
         <!-- Button to Show Recipe Form -->
@@ -102,22 +102,43 @@
 <script setup>
 import { ref,onMounted } from 'vue';
 import axios from 'axios';
-onMounted(() => {
-  retrieveIdeaDetailFormData();
+import { useRoute } from 'vue-router';
+
+const token = ref(null);
+const route = useRoute();
+console.log(route.params.id)
+const id = parseInt(route.params.id , 10); // Convert route param to integer
+const idea = ref(null);
+const loading = ref(true);
+
+onMounted(async () => {
+  try {
+    
+const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+    console.log("Esha",storedToken)
+    const response = await axios.get(`http://localhost:8082/api/v1/ideas/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${storedToken}`
+    }} )
+    idea.value = response.data.idea; // Access the 'idea' field from response data
+    retrieveIdeaDetailFormData();
+  } catch (error) {
+    console.error('Error fetching idea:', error);
+  } finally {
+    loading.value = false;
+  }
 });
 const retrieveIdeaDetailFormData = () => {
-  
-  const fetchedData = {
-    title: 'Cake',
-    description: 'a birthday cake having the shape of butterfly',
-    customerName: 'CUSTOMER-456',
-    DietaryRestrictions:'i dont want yeast',
-    Intrests:'cheesy'
-  };
-
-  // Update ideaForm with the fetched data
-  ideaForm.value = fetchedData;
-};
+  if (idea.value) {
+    ideaForm.value = {
+      title: idea.value.title || '',
+      description: idea.value.description || '',
+      customerName: idea.value.customerName || '',
+      dietaryRestrictions: Array.isArray(idea.value.dietaryRestrictions) ? idea.value.dietaryRestrictions : [].toString, // Ensure it's an array
+      interests: Array.isArray(idea.value.interests) ? idea.value.interests : [].toString 
+    }}}
 const AiFormDisabled = ref(false);
 var clickCount= 0; // To keep track of the number of clicks
 var maxClicks=3
@@ -261,7 +282,6 @@ const handleAIFileChange = (event) => {
 };
 
 
-const token = ref(null);
 const submitAIHelpForm = async () => {
   if (aiForm.value.images.length === 0) {
     alert('Please select at least one image.');
@@ -309,3 +329,17 @@ localStorage.setItem('recipeId', res.data.id);
 <style >
 
 </style>
+
+
+
+
+
+
+const retrieveIdeaDetailFormData = () => {
+  if (idea.value) {
+    ideaForm.value = {
+      title: idea.value.title || '',
+      description: idea.value.description || '',
+      customerName: idea.value.customerName || '',
+      dietaryRestrictions: Array.isArray(idea.value.dietaryRestrictions) ? idea.value.dietaryRestrictions : [].toString, // Ensure it's an array
+      interests: Array.isArray(idea.value.interests) ? idea.value.interests : [].toString // Ensure it's an array
