@@ -21,16 +21,3 @@ export default {
   },
 }
 </script>
-
-<script>
-export default {
-  methods: {
-    async deleteItem() {
-      console.log('delete is called, update should not');
-    },
-    async updateItem() {
-      console.log('update is called, delete should not');
-    },
-  },
-}
-</script>
