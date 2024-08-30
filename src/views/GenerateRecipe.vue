@@ -74,7 +74,7 @@
           <div class="mb-4 md:mb-6">
             <label for="aiRecipeImages" class="block text-sm font-semibold mb-1">Images:</label>
             <div class="relative">
-              <input @change="handleAIFileChange" id="aiRecipeImages" type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" :disabled="AiFormDisabled"/>
+              <input  @change="handleAIFileChange" id="aiRecipeImages" type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" :disabled="AiFormDisabled"/>
               <label for="aiRecipeImages" class="block bg-blue-600 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700 transition">Choose Files</label>
             </div>
 
