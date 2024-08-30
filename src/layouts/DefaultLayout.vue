@@ -5,7 +5,7 @@
   </script>
   
   <template>
-    <div class="flex h-screen m-[-65px]">
+    <div class="flex h-screen ">
       <Sidebar />
       <div class="flex flex-1 flex-col">
         <Navbar />
