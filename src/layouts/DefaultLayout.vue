@@ -1,12 +1,12 @@
   <script setup>
-  
+
   import Sidebar from '@/components/Sidebar.vue';
   import Navbar from '@/components/Navbar.vue';
-  </script>
+</script>
   
   <template>
     <!-- <div class="flex h-screen m-[-65px]"> -->
-      <div class="flex h-screen ">
+    <div class="flex h-screen ">
       <Sidebar />
       <div class="flex flex-1 flex-col">
         <Navbar />
@@ -16,5 +16,4 @@
       </div>
     </div>
   </template>
-  
-  
+

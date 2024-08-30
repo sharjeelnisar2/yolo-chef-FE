@@ -1,6 +1,7 @@
 <template>
   <div>
     <DefaultLayout />
+
     <button @click="$logout">Logout</button>
   </div>
 </template>
