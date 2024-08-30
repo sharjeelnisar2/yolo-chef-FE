@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    <h1>View Orders Page</h1>
+    <h1>View recipies Page</h1>
     <!-- Content for Generate Idea -->
   </div>
 </template>
