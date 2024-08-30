@@ -81,7 +81,7 @@
             <div class="mt-2 flex flex-wrap gap-2">
               <img v-for="(preview, index) in aiForm.imagePreviews" :key="index" :src="preview" alt="Image preview" class="w-32 h-auto border border-gray-300 rounded" />
             </div>
-            <button v-if="showAIUpdateButton" type="submit" @click="AIupdateRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Update</button>
+            <button v-if="showAIUpdateButton" type="button" @click="AIupdateRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Update</button>
           </div>
 
           <div class="flex flex-col md:flex-row justify-between mt-4">
@@ -170,13 +170,41 @@ const storedToken = localStorage.getItem("vue-token");
 
     });
   } catch (error) {
+    alert("Try Again");
     console.error('Error submitting AI Help form', error);
   }}
 }
 const AIupdateRecipe = () => {
-  AiFormDisabled.value=true;
-  AIshowSubmitButton.value=true;
-  showAIUpdateButton.value=false;
+  try {
+    const formData = new FormData();
+  formData.append('name', aiForm.value.recipeName);
+  formData.append('description', aiForm.value.recipedescription);
+  formData.append('price', aiForm.value.recipeprice);
+  formData.append('serving_size', aiForm.value.recipeservingSize);
+    const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+   if(storedToken)
+   {
+    const recipeId=localStorage.getItem("recipeId");
+    axios.patch(`http://localhost:8082/api/v1/recipes/${recipeId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${storedToken}`
+      }
+    }).then((res)=>{
+      if(res.status==200)
+    {
+      localStorage.removeItem(recipeId)
+      AiFormDisabled.value=true;
+    AIshowSubmitButton.value=true;
+    showAIUpdateButton.value=false;
+    }
+      console.log("Hello",res.status)
+    });}
+  } catch (error) {
+    console.error('Error updating AI Help form', error);
+  }
+  
   console.log("Update");
   // Logic to update the recipe
 };
@@ -261,13 +289,15 @@ const submitAIHelpForm = async () => {
         'Authorization': `Bearer ${storedToken}`
       }
     }).then((res)=>{
+      
       if(res.status==201)
     {
       AIshowUpdateDeleteButtons.value = true;
       AIshowSubmitButton.value=true;
       AiFormDisabled.value = true;
     }
-      console.log("Hello",res.status)
+      
+localStorage.setItem('recipeId', res.data.id);
     });}
   } catch (error) {
     console.error('Error submitting AI Help form', error);
