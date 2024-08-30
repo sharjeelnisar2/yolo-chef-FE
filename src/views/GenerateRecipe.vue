@@ -106,7 +106,7 @@ import { useRoute } from 'vue-router';
 
 const token = ref(null);
 const route = useRoute();
-console.log(route.params.id)
+
 const id = parseInt(route.params.id , 10); // Convert route param to integer
 const idea = ref(null);
 const loading = ref(true);
@@ -116,7 +116,7 @@ onMounted(async () => {
     
 const storedToken = localStorage.getItem("vue-token");
     token.value = storedToken;
-    console.log("Esha",storedToken)
+    
     const response = await axios.get(`http://localhost:8082/api/v1/ideas/${id}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -182,7 +182,6 @@ const storedToken = localStorage.getItem("vue-token");
     }} )
     .then((res)=>{
       
-      console.log(res.data)
        aiForm.value.recipeName = res.data.recipeName || '';
         aiForm.value.recipedescription = res.data.recipedescription || '';
          aiForm.value.recipeservingSize = res.data.recipeName || '';
@@ -220,20 +219,20 @@ const AIupdateRecipe = () => {
     AIshowSubmitButton.value=true;
     showAIUpdateButton.value=false;
     }
-      console.log("Hello",res.status)
+    
     });}
   } catch (error) {
     console.error('Error updating AI Help form', error);
   }
   
-  console.log("Update");
+  
   // Logic to update the recipe
 };
 const AIEditRecipe = () => {
   AiFormDisabled.value=false;
   AIshowSubmitButton.value=false;
   showAIUpdateButton.value=true;
-  console.log("Update");
+  
   // Logic to update the recipe
 };
 
