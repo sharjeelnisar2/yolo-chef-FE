@@ -38,12 +38,11 @@
       </form>
     </div>
 
-     <!-- AI Pop Up -->
-    <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="showPopup = false">
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-blue-600">Generate Recipe</h2>
-          <button :disabled="clickCount >= maxClicks" type="button" @click="AIOnClick" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">AI</button>
+    <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="showPopup=false">
+  <div class="bg-white p-6 rounded-lg shadow-lg" style="max-width: 800px; height: 900px; width: 100%;"> <!-- Custom width -->
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-blue-600">Generate Recipe</h2>
+          <button :disabled="clickCount >= maxClicks" type="button" @click="AIOnClick" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Help me?</button>
          <p v-if="clickCount >= maxClicks" class="text-red-500">
       You have reached the maximum number of clicks.
     </p>
@@ -58,7 +57,8 @@
 
           <div class="mb-4 md:mb-6">
             <label for="aiRecipeDescription" class="block text-sm font-semibold mb-1">Description:</label>
-            <textarea v-model="aiForm.recipedescription" id="aiRecipeDescription" required class="w-full p-2 border border-gray-300 rounded resize-y" :disabled="AiFormDisabled"/>
+            <textarea v-model="aiForm.recipedescription" id="aiRecipeDescription" required class="w-full p-2 border border-gray-300 rounded resize-y" :style="{ height: '150px' }" :disabled="AiFormDisabled"/>
+
           </div>
 
           <div class="mb-4 md:mb-6">
@@ -72,24 +72,44 @@
           </div>
 
           <div class="mb-4 md:mb-6">
-            <label for="aiRecipeImages" class="block text-sm font-semibold mb-1">Images:</label>
-            <div class="relative">
-              <input  @change="handleAIFileChange" id="aiRecipeImages" type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" :disabled="AiFormDisabled"/>
-              <label for="aiRecipeImages" class="block bg-blue-600 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700 transition">Choose Files</label>
-            </div>
+          <div>
+            <label for="aiRecipeImages" class="block text-sm font-semibold mb-1 text-center">Images:</label>
+  <div class="relative text-center">
+    <input 
+      @change="handleAIFileChange" 
+      id="aiRecipeImages" 
+      type="file" 
+      accept="image/*" 
+      multiple 
+      class="absolute inset-0 opacity-0 cursor-pointer" 
+      :disabled="AiFormDisabled"
+    />
+    <label 
+      for="aiRecipeImages" 
+      class="inline-block bg-blue-600 text-white py-2 px-4 rounded cursor-pointer hover:bg-blue-700 transition"
+      style="max-width: 200px;"
+    >
+      Choose Files
+    </label>
+  </div>
 
-            <div class="mt-2 flex flex-wrap gap-2">
-              <img v-for="(preview, index) in aiForm.imagePreviews" :key="index" :src="preview" alt="Image preview" class="w-32 h-auto border border-gray-300 rounded" />
-            </div>
+  <div class="mt-2 flex flex-wrap gap-2">
+    <div v-for="(preview, index) in aiForm.imagePreviews" :key="index" class="text-center">
+      <img :src="preview.url" alt="Image preview" class="w-32 h-auto border border-gray-300 rounded" />
+      <p class="text-sm mt-1">{{ preview.name }}</p> <!-- Display image name -->
+    </div>
+  </div>
+  </div>
+
             <button v-if="showAIUpdateButton" type="button" @click="AIupdateRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Update</button>
           </div>
 
           <div class="flex flex-col md:flex-row justify-between mt-4">
-            <button v-if="AIshowSubmitButton" type="submit" @click="AIsaveRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Save </button>
-            <button v-if="!AIshowUpdateDeleteButtons" type="submit" class="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition">Save as Draft</button>
-            <button v-if="AIshowUpdateDeleteButtons" type="button" @click="AIEditRecipe" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">Edit </button>
+            <button @click="cancelForm"  type="button" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition ml-2">Cancel</button>
             <button v-if="AIshowUpdateDeleteButtons" type="button" @click="AIdeleteRecipe" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">Delete </button>
-            <button @click="showPopup = false" type="button" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition ml-2">Cancel</button>
+            <button v-if="AIshowUpdateDeleteButtons" type="button" @click="AIEditRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Edit </button>
+            <button v-if="!AIshowUpdateDeleteButtons" type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800 transition">Save as Draft</button>
+            <button v-if="AIshowSubmitButton" type="submit" @click="AIsaveRecipe" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">Save </button>
           </div>
         </form>
       </div>
@@ -104,6 +124,7 @@ import { ref,onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 
+let ideaArray =  [];
 const token = ref(null);
 const route = useRoute();
 
@@ -145,6 +166,7 @@ var maxClicks=3
 const showAIUpdateButton=ref(false);
 const AIshowSubmitButton=ref(false);
 const AIshowUpdateDeleteButtons = ref(false);
+
 
 //AI
 const AIsaveRecipe = () => {
@@ -188,7 +210,13 @@ const storedToken = localStorage.getItem("vue-token");
         aiForm.value.recipeservingSize = res.data.recipeservingSize || '';
       
 
-    });
+    }).catch((error) => {
+      console.log(error)
+      if (error.response && error.response.status === 400) {
+        alert("Try Again");
+      }
+          
+        });
   } catch (error) {
     alert("Try Again");
     console.error('Error submitting AI Help form', error);
@@ -206,7 +234,8 @@ const AIupdateRecipe = () => {
    if(storedToken)
    {
     const recipeId=localStorage.getItem("recipeId");
-    axios.patch(`http://localhost:8082/api/v1/recipes/${recipeId}`, formData, {
+    console.log("Esha",recipeId)
+    axios.post(`http://localhost:8082/api/v1/recipes/${recipeId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${storedToken}`
@@ -232,13 +261,33 @@ const AIEditRecipe = () => {
   AiFormDisabled.value=false;
   AIshowSubmitButton.value=false;
   showAIUpdateButton.value=true;
-  
   // Logic to update the recipe
 };
 
 const AIdeleteRecipe = () => {
   console.log("Delete");
-  // Logic to delete the recipe
+  const storedToken = localStorage.getItem("vue-token");
+    token.value = storedToken;
+   if(storedToken)
+   {
+  const recipeId=localStorage.getItem("recipeId");
+  axios.delete(`http://localhost:8082/api/v1/recipes/${recipeId}`, {
+      headers: {
+        'Authorization': `Bearer ${storedToken}`
+      }
+    }).then((res)=>{
+      
+      if(res.status==200)
+    {
+      AIshowUpdateDeleteButtons.value = true;
+      AIshowSubmitButton.value=true;
+      AiFormDisabled.value = true;
+      localStorage.setItem("recipeId",res.data.id)
+console.log(res.data.id)
+    }
+  
+    });
+  }// Logic to delete the recipe
 };
 // Idea form data
 const ideaForm = ref({
@@ -261,8 +310,6 @@ const aiForm = ref({
 
 const showPopup = ref(false);
 const showRecipeForm = ref(false);
-
-
 const handleAIFileChange = (event) => {
   const files = Array.from(event.target.files);
   aiForm.value.images = files;
@@ -270,7 +317,12 @@ const handleAIFileChange = (event) => {
   aiForm.value.imagePreviews = files.map(file => {
     const reader = new FileReader();
     return new Promise((resolve) => {
-      reader.onload = (e) => resolve(e.target.result);
+      reader.onload = (e) => {
+        resolve({
+          url: e.target.result,
+          name: file.name // Store the file name along with the URL
+        });
+      };
       reader.readAsDataURL(file);
     });
   });
@@ -282,6 +334,7 @@ const handleAIFileChange = (event) => {
 
 
 const submitAIHelpForm = async () => {
+      
   if (aiForm.value.images.length === 0) {
     alert('Please select at least one image.');
     return;
@@ -295,6 +348,7 @@ const submitAIHelpForm = async () => {
 
   for (const image of aiForm.value.images) {
     formData.append('images', image);
+
   }
 
   try {
@@ -302,7 +356,7 @@ const submitAIHelpForm = async () => {
     token.value = storedToken;
    if(storedToken)
    {
-    const response = await axios.post('http://localhost:8082/api/v1/ideas/1/recipes', formData, {
+    const response = await axios.post(`http://localhost:8082/api/v1/ideas/${id}/recipes`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${storedToken}`
@@ -314,9 +368,10 @@ const submitAIHelpForm = async () => {
       AIshowUpdateDeleteButtons.value = true;
       AIshowSubmitButton.value=true;
       AiFormDisabled.value = true;
+      localStorage.setItem("recipeId",res.data.id)
+console.log(res.data.id)
     }
       
-localStorage.setItem('recipeId', res.data.id);
     });}
   } catch (error) {
     console.error('Error submitting AI Help form', error);
@@ -334,11 +389,3 @@ localStorage.setItem('recipeId', res.data.id);
 
 
 
-const retrieveIdeaDetailFormData = () => {
-  if (idea.value) {
-    ideaForm.value = {
-      title: idea.value.title || '',
-      description: idea.value.description || '',
-      customerName: idea.value.customerName || '',
-      dietaryRestrictions: Array.isArray(idea.value.dietaryRestrictions) ? idea.value.dietaryRestrictions : [].toString, // Ensure it's an array
-      interests: Array.isArray(idea.value.interests) ? idea.value.interests : [].toString // Ensure it's an array
