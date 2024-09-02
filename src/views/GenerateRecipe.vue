@@ -38,7 +38,7 @@
       </form>
     </div>
 
-    <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="showPopup=false">
+    <div v-if="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" @click.self="cancelForm">
   <div class="bg-white p-6 rounded-lg shadow-lg" style="max-width: 800px; height: 900px; width: 100%;"> <!-- Custom width -->
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-bold text-blue-600">Generate Recipe</h2>
@@ -151,6 +151,9 @@ const storedToken = localStorage.getItem("vue-token");
     loading.value = false;
   }
 });
+const cancelForm=()=>{
+  window.location.reload();
+}
 const retrieveIdeaDetailFormData = () => {
   if (idea.value) {
     ideaForm.value = {
@@ -229,6 +232,11 @@ const AIupdateRecipe = () => {
   formData.append('description', aiForm.value.recipedescription);
   formData.append('price', aiForm.value.recipeprice);
   formData.append('serving_size', aiForm.value.recipeservingSize);
+  
+  for (const image of aiForm.value.images) {
+    formData.append('images', image);
+
+  }
     const storedToken = localStorage.getItem("vue-token");
     token.value = storedToken;
    if(storedToken)
@@ -279,11 +287,7 @@ const AIdeleteRecipe = () => {
       
       if(res.status==200)
     {
-      AIshowUpdateDeleteButtons.value = true;
-      AIshowSubmitButton.value=true;
-      AiFormDisabled.value = true;
-      localStorage.setItem("recipeId",res.data.id)
-console.log(res.data.id)
+      showPopup.value=false
     }
   
     });
