@@ -120,7 +120,7 @@ async function fetchOrders() {
 async function fetchOrderDetails(orderId) {
   try {
     const token = localStorage.getItem('vue-token');
-    const response = await fetch(`http://localhost:8082/api/v1/orders/detail/${orderId}`, {
+    const response = await fetch(`http://localhost:8082/api/v1/orders/${orderId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`,
